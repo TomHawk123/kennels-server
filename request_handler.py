@@ -1,5 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from views import get_all_animals
+from views.animal_requests import get_single_animal, get_all_animals
+from views.customer_requests import get_all_customers, get_single_customer
+from views.employee_requests import get_all_employees, get_single_employee
+from views.location_requests import get_all_locations, get_single_location
+
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -65,22 +69,48 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_GET(self):
         """Handles GET requests to the server
         """
+        response = {}  # Default response
         # Set the response code to 'Ok'
         self._set_headers(200)
 
+        # Parse the URL and capture the tuple that is returned
+        (resource, id) = self.parse_url(self.path)
+
         # Your new console.log() that outputs to the terminal
-        print(self.path)
+        # print(self.path)
 
         # It's an if..else statement
-        if self.path == "/animals":
-            # In Python, this is a list of dictionaries
-            # In JavaScript, you would call it an array of objects
-            response = get_all_animals()
-        else:
-            response = []
+        # if self.path == "/animals":
+        if resource == "animals":
+            if id is not None:
+                # In Python, this is a list of dictionaries
+                # In JavaScript, you would call it an array of objects
+                response = f"{get_single_animal(id)}"
+            else:
+                response = f"{get_all_animals()}"
+
+        if resource == "locations":
+            if id is not None:
+                response = f"{get_single_location(id)}"
+            else:
+                response = f"{get_all_locations}"
+                # In Python, this is a list of dictionaries
+                # In JavaScript, you would call it an array of objects
+
+        if resource == "employees":
+            if id is not None:
+                response = f"{get_single_employee(id)}"
+            else:
+                response = f"{get_all_employees()}"
+
+        if resource == "customers":
+            if id is not None:
+                response = f"{get_single_customer(id)}"
+            else:
+                response = f"{get_all_customers()}"
 
         # This weird code sends a response back to the client
-        self.wfile.write(f"{response}".encode())
+        self.wfile.write(response.encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
@@ -116,20 +146,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Function with a single parameter
-
-
-def get_single_animal(id):
-    # Variable to hold the found animal, if it exists
-    requested_animal = None
-
-    # Iterate the ANIMALS list above. Very similar to the
-    # for..of loops you used in JavaScript.
-    for animal in ANIMALS:
-        # Dictionaries in Python use [] notation to find a key
-        # instead of the dot notation that JavaScript used.
-        if animal["id"] == id:
-            requested_animal = animal
-
-    return requested_animal

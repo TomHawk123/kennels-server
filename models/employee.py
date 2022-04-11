@@ -1,6 +1,3 @@
-from pydoc import describe
-
-
 class Employee():
 
     def __init__(self, id, address):

@@ -252,9 +252,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             self.wfile.write("".encode())
 
 
-# This function is not inside the class. It is the starting
-# point of this application
 def main():
+    # This function is not inside the class. It is the starting
+    # point of this application
     """Starts the server on port 8088 using the HandleRequests class
     """
     host = ''

@@ -3,6 +3,28 @@ import sqlite3
 import json
 
 
+def create_location(new_location):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Location
+        (name,
+        address
+        )
+        VALUES( ?, ?);
+        """, (
+            new_location['name'],
+            new_location['address']
+        ))
+
+        id = db_cursor.lastrowid
+
+        new_location['id'] = id
+
+    return json.dumps(new_location)
+
+
 def get_all_locations():
     # Open a connection to the database
     with sqlite3.connect("./kennel.sqlite3") as conn:
@@ -72,38 +94,6 @@ def get_single_location(id):
         return json.dumps(location.__dict__)
 
 
-def create_location(new_location):
-    with sqlite3.connect("./kennel.sqlite3") as conn:
-        db_cursor = conn.cursor()
-
-        db_cursor.execute("""
-        INSERT INTO Location
-        (name,
-        address
-        )
-        VALUES( ?, ?);
-        """, (
-            new_location['name'],
-            new_location['address']
-        ))
-
-        id = db_cursor.lastrowid
-
-        new_location['id'] = id
-
-    return json.dumps(new_location)
-
-
-def delete_location(id):
-    with sqlite3.connect("./kennel.sqlite3") as conn:
-        db_cursor = conn.cursor()
-
-        db_cursor.execute("""
-        DELETE FROM location
-        WHERE id = ?
-        """, (id, ))
-
-
 def update_location(id, new_location):
     with sqlite3.connect("./kennel-sqlite3") as conn:
         db_cursor = conn.cursor()
@@ -125,6 +115,16 @@ def update_location(id, new_location):
         return False
     else:
         return True
+
+
+def delete_location(id):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM location
+        WHERE id = ?
+        """, (id, ))
 
 
 # ORIGINAL CODE

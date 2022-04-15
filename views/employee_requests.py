@@ -1,9 +1,32 @@
 from models.animal import Animal
-from models.customer import Customer
 from models.employee import Employee
 import json
 import sqlite3
 from models.location import Location
+
+
+def create_employee(new_employee):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Employee
+        (name,
+        address,
+        location_id
+        )
+        VALUES ( ?, ?, ? );
+        """, (
+            new_employee['name'],
+            new_employee['address'],
+            new_employee['location_id']
+        ))
+
+        id = db_cursor.lastrowid
+
+        new_employee['id'] = id
+
+    return json.dumps(new_employee)
 
 
 def get_all_employees():
@@ -149,40 +172,6 @@ def get_employees_by_location_id(location_id):
     return json.dumps(employees)
 
 
-def create_employee(new_employee):
-    with sqlite3.connect("./kennel.sqlite3") as conn:
-        db_cursor = conn.cursor()
-
-        db_cursor.execute("""
-        INSERT INTO Employee
-        (name,
-        address,
-        location_id
-        )
-        VALUES ( ?, ?, ? );
-        """, (
-            new_employee['name'],
-            new_employee['address'],
-            new_employee['location_id']
-        ))
-
-        id = db_cursor.lastrowid
-
-        new_employee['id'] = id
-
-    return json.dumps(new_employee)
-
-
-def delete_employee(id):
-    with sqlite3.connect("./kennel.sqlite3") as conn:
-        db_cursor = conn.cursor()
-
-        db_cursor.execute("""
-        DELETE FROM employee
-        WHERE id = ?
-        """, (id, ))
-
-
 def update_employee(id, new_employee):
     with sqlite3.connect("./kennel.sqlite3") as conn:
         db_cursor = conn.cursor()
@@ -211,6 +200,16 @@ def update_employee(id, new_employee):
     else:
         # Forces 204 response by main module
         return True
+
+
+def delete_employee(id):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM employee
+        WHERE id = ?
+        """, (id, ))
 
 
 # ORIGINAL CODE
